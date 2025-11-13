@@ -65,4 +65,52 @@ public class personnelsRestController {
         return response;
     }
 
+    @DeleteMapping("/{id}")
+    public Map<String, Object> deletePersonnel(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            boolean success = personnelsService.deleteById(id);
+            if (success) {
+                response.put("code", 200);
+                response.put("message", "人员删除成功");
+                response.put("data", null);
+            } else {
+                response.put("code", 400);
+                response.put("message", "删除失败");
+                response.put("error", "无法删除");
+            }
+        } catch (Exception e) {
+            response.put("code", 400);
+            response.put("message", "删除失败");
+            response.put("error", "无法删除");
+        }
+        return response;
+    }
+
+    @GetMapping("/search")
+    public Map<String, Object> searchPersonnels(
+            @RequestParam String keyword,
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize
+    ) {
+        Map<String, Object> result = personnelsService.searchPersonnels(keyword, page, pageSize);
+
+        // 从 result 中提取分页信息
+        Map<String, Object> pagination = new HashMap<>();
+        pagination.put("page", result.get("page"));
+        pagination.put("page_size", result.get("page_size"));
+        pagination.put("total", result.get("total"));
+        pagination.put("total_pages", result.get("total_pages"));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("items", result.get("items"));
+        data.put("pagination", pagination);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 200);
+        response.put("message", "搜索成功");
+        response.put("data", data);
+
+        return response;
+    }
 }

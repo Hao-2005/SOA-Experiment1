@@ -50,4 +50,41 @@ public class personnelsServiceImpl implements personnelsService {
     public personnels getById(Long id) {
         return personnelMapper.selectById(id);
     }
+
+    @Override
+    public boolean deleteById(Long id) {
+        int rows = personnelMapper.deleteById(id);
+        return rows > 0;
+    }
+
+    @Override
+    public Map<String, Object> searchPersonnels(String keyword, Integer page, Integer pageSize) {
+        if (page == null || page <= 0) page = 1;
+        if (pageSize == null || pageSize <= 0) pageSize = 10;
+        int offset = (page - 1) * pageSize;
+
+        // 构建搜索条件：姓名、工号、部门
+        QueryWrapper<personnels> wrapper = new QueryWrapper<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w.like("name", keyword)
+                    .or().like("employee_id", keyword)
+                    .or().like("department", keyword));
+        }
+
+        // 总数
+        long total = personnelMapper.selectCount(wrapper);
+
+        // 当前页数据
+        List<personnels> records = personnelMapper.selectList(wrapper.last("LIMIT " + offset + ", " + pageSize));
+
+        // 返回结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("items", records);
+        result.put("page", page);
+        result.put("page_size", pageSize);
+        result.put("total", total);
+        result.put("total_pages", (long) Math.ceil((double) total / pageSize));
+
+        return result;
+    }
 }

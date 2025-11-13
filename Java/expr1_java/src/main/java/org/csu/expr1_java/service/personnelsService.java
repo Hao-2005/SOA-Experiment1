@@ -9,4 +9,7 @@ public interface personnelsService {
     Map<String, Object> queryPersonnelsByPageAndCondition(
             Integer page, Integer pageSize, String department, String role, String status);
     personnels getById(Long id);
+
+    boolean deleteById(Long id);
+    Map<String, Object> searchPersonnels(String keyword, Integer page, Integer pageSize);
 }
