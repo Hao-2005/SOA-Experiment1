@@ -65,37 +65,4 @@ public class personnelsRestController {
         return response;
     }
 
-    @PostMapping
-    public Map<String, Object> createPersonnel(@RequestBody personnels personnel) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            personnels created = personnelsService.createPersonnel(personnel);
-            response.put("code", 201);
-            response.put("message", "人员创建成功");
-            response.put("data", created);
-        } catch (Exception e) {
-            response.put("code", 400);
-            response.put("message", "创建失败");
-            response.put("error", e.getMessage());
-        }
-        return response;
-    }
-
-    @PutMapping("/{id}")
-    public Map<String, Object> updatePersonnel(@PathVariable Long id, @RequestBody personnels updatedData) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            personnels updated = personnelsService.updatePersonnel(id, updatedData);
-            response.put("code", 200);
-            response.put("message", "人员信息更新成功");
-            response.put("data", updated);
-        } catch (Exception e) {
-            response.put("code", 400);
-            response.put("message", "更新失败");
-            response.put("error", e.getMessage());
-        }
-        return response;
-    }
-
-
 }

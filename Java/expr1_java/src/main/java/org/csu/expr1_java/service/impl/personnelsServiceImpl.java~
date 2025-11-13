@@ -55,10 +55,10 @@ public class personnelsServiceImpl implements personnelsService {
     public personnels createPersonnel(personnels personnel) {
         // 检查 employee_id 是否已存在
         personnels existing = personnelMapper.selectOne(
-                new QueryWrapper<personnels>().eq("employee_id", personnel.getEmployeeId())
+                new QueryWrapper<personnels>().eq("employee_id", personnel.getEmployee_id())
         );
         if (existing != null) {
-            throw new RuntimeException("工号已存在: " + personnel.getEmployeeId());
+            throw new RuntimeException("工号已存在: " + personnel.getEmployee_id());
         }
 
         // 设置默认状态
