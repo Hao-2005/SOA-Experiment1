@@ -1,5 +1,6 @@
 package org.csu.expr1_java.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,7 +12,7 @@ import java.sql.Timestamp;
 
 @TableName("personnels")
 public class personnels {
-    @TableId(value = "id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     @TableField(value = "employee_id")
     private String employeeId;
