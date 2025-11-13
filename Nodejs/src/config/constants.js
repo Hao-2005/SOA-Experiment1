@@ -9,8 +9,7 @@ module.exports = {
     'category',
     'total_quantity',
     'available_quantity',
-    'location',
-    'unit_price'
+    'location'
   ],
 
   DEFAULT_STATUS: 'available',

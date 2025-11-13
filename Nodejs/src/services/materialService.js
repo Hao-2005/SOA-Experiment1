@@ -7,12 +7,44 @@ const { toMaterialDto, toMaterialDtoList } = require('../models/Material');
 const constants = require('../config/constants');
 
 /**
- * Get all materials
- * @returns {Promise<Array>} Array of material DTOs
+ * Get all materials with pagination and filtering
+ * @param {Object} options - Query options { page, pageSize, category, status }
+ * @returns {Promise<Object>} { materials: Array, pagination: { page, pageSize, total } }
  */
-const getAllMaterials = async () => {
-  const materials = await db.getAllMaterials();
-  return toMaterialDtoList(materials);
+const getAllMaterials = async (options = {}) => {
+  const { page = 1, pageSize = 10, category = null, status = null } = options;
+  
+  // Get all materials from database
+  const allMaterials = await db.getAllMaterials();
+  
+  // Apply filters
+  let filtered = allMaterials;
+  
+  if (category) {
+    filtered = filtered.filter(m => m.category === category);
+  }
+  
+  if (status) {
+    filtered = filtered.filter(m => m.status === status);
+  }
+  
+  // Calculate pagination
+  const total = filtered.length;
+  const offset = (page - 1) * pageSize;
+  const paginatedMaterials = filtered.slice(offset, offset + pageSize);
+  
+  // Convert to DTO
+  const materials = toMaterialDtoList(paginatedMaterials);
+  
+  return {
+    materials,
+    pagination: {
+      page,
+      pageSize,
+      total,
+      totalPages: Math.ceil(total / pageSize)
+    }
+  };
 };
 
 /**

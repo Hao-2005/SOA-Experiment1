@@ -7,6 +7,76 @@ const materialValidator = require('../validators/materialValidator');
 const { buildResponse } = require('../utils/response');
 
 /**
+ * Get all materials with pagination and filtering
+ * Query params: page, pageSize, category, status
+ */
+const getAllMaterials = async (req, res) => {
+  try {
+    // Extract query parameters with defaults
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const pageSize = Math.max(1, Math.min(100, parseInt(req.query.pageSize) || 10));
+    const category = req.query.category ? String(req.query.category).trim() : null;
+    const status = req.query.status ? String(req.query.status).trim() : null;
+
+    console.log('Query params:', { page, pageSize, category, status });
+
+    const result = await materialService.getAllMaterials({
+      page,
+      pageSize,
+      category,
+      status
+    });
+
+    console.log('Service result:', { materialsCount: result.materials.length, pagination: result.pagination });
+
+    res.json(buildResponse('查询成功', result));
+  } catch (error) {
+    console.error('Get all materials error:', error);
+    res.status(500).json(buildResponse('服务器内部错误', null, 500));
+  }
+};
+
+/**
+ * Get material by ID
+ */
+const getMaterialById = async (req, res) => {
+  try {
+    const material = await materialService.getMaterialById(req.params.id);
+    if (!material) {
+      return res.status(404).json(buildResponse('物资不存在', null, 404));
+    }
+    res.json(buildResponse('查询成功', material));
+  } catch (error) {
+    console.error('Get material by ID error:', error);
+    res.status(500).json(buildResponse('服务器内部错误', null, 500));
+  }
+};
+
+/**
+ * Create a new material
+ */
+const createMaterial = async (req, res) => {
+  try {
+    const errors = materialValidator.validateMaterialPayload(req.body);
+    if (errors.length > 0) {
+      return res.status(400).json(buildResponse(errors.join('; '), null, 400));
+    }
+
+    // Check for duplicate material code
+    const exists = await materialService.materialCodeExists(req.body.material_code);
+    if (exists) {
+      return res.status(409).json(buildResponse('物资编号已存在', null, 409));
+    }
+
+    const created = await materialService.createMaterial(req.body);
+    res.status(201).json(buildResponse('创建成功', created));
+  } catch (error) {
+    console.error('Create material error:', error);
+    res.status(500).json(buildResponse('服务器内部错误', null, 500));
+  }
+};
+
+/**
  * Get available materials
  */
 const getAvailableMaterials = async (req, res) => {
@@ -131,6 +201,9 @@ const updateMaterialQuantity = async (req, res) => {
 };
 
 module.exports = {
+  getAllMaterials,
+  getMaterialById,
+  createMaterial,
   getAvailableMaterials,
   updateMaterial,
   deleteMaterial,
