@@ -10,6 +10,9 @@ public interface personnelsService {
             Integer page, Integer pageSize, String department, String role, String status);
     personnels getById(Long id);
 
+    personnels createPersonnel(personnels personnel);// 创建人员
+    personnels updatePersonnel(Long id, personnels updatedData);// 更新人员
+
     boolean deleteById(Long id);
     Map<String, Object> searchPersonnels(String keyword, Integer page, Integer pageSize);
 }

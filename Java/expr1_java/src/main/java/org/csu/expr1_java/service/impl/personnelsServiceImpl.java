@@ -52,6 +52,45 @@ public class personnelsServiceImpl implements personnelsService {
     }
 
     @Override
+    public personnels createPersonnel(personnels personnel) {
+        // 检查 employee_id 是否已存在
+        personnels existing = personnelMapper.selectOne(
+                new QueryWrapper<personnels>().eq("employee_id", personnel.getEmployeeId())
+        );
+        if (existing != null) {
+            throw new RuntimeException("工号已存在: " + personnel.getEmployeeId());
+        }
+
+        // 设置默认状态
+        if (personnel.getStatus() == null || personnel.getStatus().isEmpty()) {
+            personnel.setStatus("active");
+        }
+
+        personnelMapper.insert(personnel);
+        return personnel;
+    }
+
+    @Override
+    public personnels updatePersonnel(Long id, personnels updatedData) {
+        personnels existing = personnelMapper.selectById(id);
+        if (existing == null) {
+            throw new RuntimeException("人员不存在: ID=" + id);
+        }
+
+        // 只更新有值的字段
+        if (updatedData.getName() != null) existing.setName(updatedData.getName());
+        if (updatedData.getDepartment() != null) existing.setDepartment(updatedData.getDepartment());
+        if (updatedData.getRole() != null) existing.setRole(updatedData.getRole());
+        if (updatedData.getContact() != null) existing.setContact(updatedData.getContact());
+        if (updatedData.getEmail() != null) existing.setEmail(updatedData.getEmail());
+        if (updatedData.getStatus() != null) existing.setStatus(updatedData.getStatus());
+
+        personnelMapper.updateById(existing);
+        return existing;
+    }
+
+
+    @Override
     public boolean deleteById(Long id) {
         int rows = personnelMapper.deleteById(id);
         return rows > 0;
