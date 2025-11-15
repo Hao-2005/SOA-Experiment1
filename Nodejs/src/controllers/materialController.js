@@ -12,9 +12,9 @@ const { buildResponse } = require('../utils/response');
  */
 const getAllMaterials = async (req, res) => {
   try {
-    // Extract query parameters with defaults
-    const page = Math.max(1, parseInt(req.query.page) || 1);
-    const pageSize = Math.max(1, Math.min(100, parseInt(req.query.pageSize) || 10));
+    // Extract query parameters (optional - if not provided, return all)
+    const page = req.query.page ? Math.max(1, parseInt(req.query.page)) : null;
+    const pageSize = req.query.pageSize ? Math.max(1, Math.min(100, parseInt(req.query.pageSize))) : null;
     const category = req.query.category ? String(req.query.category).trim() : null;
     const status = req.query.status ? String(req.query.status).trim() : null;
 
@@ -27,9 +27,14 @@ const getAllMaterials = async (req, res) => {
       status
     });
 
-    console.log('Service result:', { materialsCount: result.materials.length, pagination: result.pagination });
-
-    res.json(buildResponse('查询成功', result));
+    // If result is an array, return it directly; if it's an object with pagination, return as is
+    if (Array.isArray(result)) {
+      console.log('Service result: Returning all materials, count:', result.length);
+      res.json(buildResponse('查询成功', result));
+    } else {
+      console.log('Service result:', { materialsCount: result.materials.length, pagination: result.pagination });
+      res.json(buildResponse('查询成功', result));
+    }
   } catch (error) {
     console.error('Get all materials error:', error);
     res.status(500).json(buildResponse('服务器内部错误', null, 500));
