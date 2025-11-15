@@ -11,7 +11,7 @@ const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || ';0s9HFdr7-vf',
+  password: process.env.DB_PASSWORD || '238373',
   database: process.env.DB_NAME || 'soa_experiment1',
   waitForConnections: true,
   connectionLimit: 10,

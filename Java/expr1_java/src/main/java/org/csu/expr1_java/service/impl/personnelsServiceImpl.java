@@ -18,7 +18,8 @@ public class personnelsServiceImpl implements personnelsService {
     private personnelsMapper personnelMapper;
 
     @Override
-    public Map<String, Object> queryPersonnelsByPageAndCondition(Integer page, Integer pageSize, String department, String role, String status) {
+    public Map<String, Object> queryPersonnelsByPageAndCondition(Integer page, Integer pageSize,
+                                                                 String department, String role, String status) {
         if (page == null || page <= 0) page = 1;
         if (pageSize == null || pageSize <= 0) pageSize = 10;
         int offset = (page - 1) * pageSize;
