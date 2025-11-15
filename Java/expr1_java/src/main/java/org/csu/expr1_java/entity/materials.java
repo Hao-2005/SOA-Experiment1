@@ -133,4 +133,23 @@ public class materials {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "materials{" +
+                "id=" + id +
+                ", materialCode='" + materialCode + '\'' +
+                ", name='" + name + '\'' +
+                ", category='" + category + '\'' +
+                ", totalQuantity=" + totalQuantity +
+                ", availableQuantity=" + availableQuantity +
+                ", location='" + location + '\'' +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", purchaseDate=" + purchaseDate +
+                ", unitPrice=" + unitPrice +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

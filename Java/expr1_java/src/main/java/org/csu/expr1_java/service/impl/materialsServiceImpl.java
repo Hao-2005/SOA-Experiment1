@@ -39,7 +39,7 @@ public class materialsServiceImpl implements materialsService {
      * Build base URL for Node.js service
      */
     private String getBaseUrl() {
-        return nodejsServiceUrl + "/materials";
+        return  "/materials";
     }
 
     /**
@@ -80,9 +80,9 @@ public class materialsServiceImpl implements materialsService {
     public Map<String, Object> getAllMaterials(Integer page, Integer pageSize, String category, String status) {
         try {
             String url = getBaseUrl();
-            logger.info("Calling Node.js service via WebClient: GET {} with params: page={}, pageSize={}, category={}, status={}", 
+            logger.info("Calling Node.js service via WebClient: GET {} with params: page={}, pageSize={}, category={}, status={}",
                     url, page, pageSize, category, status);
-            
+
             // Build URI with query parameters using WebClient's uriBuilder
             var uriSpec = webClient.get().uri(uriBuilder -> {
                 uriBuilder.path(url);
@@ -100,13 +100,13 @@ public class materialsServiceImpl implements materialsService {
                 }
                 return uriBuilder.build();
             });
-            
+
             Map<String, Object> response = uriSpec
                     .retrieve()
                     .bodyToMono(Map.class)
                     .timeout(Duration.ofSeconds(10))
                     .block();
-            
+
             return handleResponse(response);
         } catch (Exception e) {
             return handleException(e, "getAllMaterials");
@@ -159,6 +159,7 @@ public class materialsServiceImpl implements materialsService {
             
             // Convert materials entity to Map for JSON serialization
             Map<String, Object> requestBody = convertMaterialToMap(material);
+            System.out.println("requestBody: " + requestBody);
             
             Map<String, Object> response = webClient.post()
                     .uri(url)
@@ -236,7 +237,7 @@ public class materialsServiceImpl implements materialsService {
                     .bodyToMono(Map.class)
                     .timeout(Duration.ofSeconds(10))
                     .block();
-            
+            System.out.println(response);
             return handleResponse(response);
         } catch (Exception e) {
             return handleException(e, "updateMaterialQuantity");

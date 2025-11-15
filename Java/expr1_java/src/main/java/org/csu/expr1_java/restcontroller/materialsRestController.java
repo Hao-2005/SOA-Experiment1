@@ -57,6 +57,7 @@ public class materialsRestController {
      */
     @PostMapping
     public Map<String, Object> createMaterial(@RequestBody materials material) {
+        System.out.println(material);
         return materialsService.createMaterial(material);
     }
 
@@ -86,7 +87,7 @@ public class materialsRestController {
     public Map<String, Object> updateMaterialQuantity(
             @PathVariable Long id,
             @RequestBody Map<String, Object> request) {
-        
+        System.out.println(request);
         String operation = (String) request.get("operation");
         Integer quantity = null;
         
@@ -99,7 +100,6 @@ public class materialsRestController {
         } else if (qtyObj instanceof Number) {
             quantity = ((Number) qtyObj).intValue();
         }
-        
         return materialsService.updateMaterialQuantity(id, operation, quantity);
     }
 }
