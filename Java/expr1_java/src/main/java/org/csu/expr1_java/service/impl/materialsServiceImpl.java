@@ -84,12 +84,12 @@ public class materialsServiceImpl implements materialsService {
                     url, page, pageSize, category, status);
 
             // Build URI with query parameters using WebClient's uriBuilder
+            // Only add page/pageSize if both are provided (pagination requested)
             var uriSpec = webClient.get().uri(uriBuilder -> {
                 uriBuilder.path(url);
-                if (page != null && page > 0) {
+                // Only add pagination params if both are provided
+                if (page != null && pageSize != null && page > 0 && pageSize > 0) {
                     uriBuilder.queryParam("page", page);
-                }
-                if (pageSize != null && pageSize > 0) {
                     uriBuilder.queryParam("pageSize", pageSize);
                 }
                 if (category != null && !category.trim().isEmpty()) {

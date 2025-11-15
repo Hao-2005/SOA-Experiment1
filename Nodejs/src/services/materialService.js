@@ -7,12 +7,12 @@ const { toMaterialDto, toMaterialDtoList } = require('../models/Material');
 const constants = require('../config/constants');
 
 /**
- * Get all materials with pagination and filtering
+ * Get all materials with optional pagination and filtering
  * @param {Object} options - Query options { page, pageSize, category, status }
- * @returns {Promise<Object>} { materials: Array, pagination: { page, pageSize, total } }
+ * @returns {Promise<Array|Object>} Array of materials if no pagination, or Object with materials and pagination
  */
 const getAllMaterials = async (options = {}) => {
-  const { page = 1, pageSize = 10, category = null, status = null } = options;
+  const { page = null, pageSize = null, category = null, status = null } = options;
   
   // Get all materials from database
   const allMaterials = await db.getAllMaterials();
@@ -28,23 +28,28 @@ const getAllMaterials = async (options = {}) => {
     filtered = filtered.filter(m => m.status === status);
   }
   
-  // Calculate pagination
-  const total = filtered.length;
-  const offset = (page - 1) * pageSize;
-  const paginatedMaterials = filtered.slice(offset, offset + pageSize);
-  
   // Convert to DTO
-  const materials = toMaterialDtoList(paginatedMaterials);
+  const materials = toMaterialDtoList(filtered);
   
-  return {
-    materials,
-    pagination: {
-      page,
-      pageSize,
-      total,
-      totalPages: Math.ceil(total / pageSize)
-    }
-  };
+  // If pagination is requested, return paginated result
+  if (page !== null && pageSize !== null && page > 0 && pageSize > 0) {
+    const total = materials.length;
+    const offset = (page - 1) * pageSize;
+    const paginatedMaterials = materials.slice(offset, offset + pageSize);
+    
+    return {
+      materials: paginatedMaterials,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize)
+      }
+    };
+  }
+  
+  // Otherwise, return all materials as array
+  return materials;
 };
 
 /**
@@ -52,8 +57,10 @@ const getAllMaterials = async (options = {}) => {
  * @returns {Promise<Array>} Array of available material DTOs
  */
 const getAvailableMaterials = async () => {
-  const allMaterials = await getAllMaterials();
-  return allMaterials.filter(
+  const allMaterials = await getAllMaterials({});
+  // getAllMaterials now returns an array when no pagination is specified
+  const materialsArray = Array.isArray(allMaterials) ? allMaterials : allMaterials.materials || [];
+  return materialsArray.filter(
     (material) => material.status === 'available' && material.available_quantity > 0
   );
 };
