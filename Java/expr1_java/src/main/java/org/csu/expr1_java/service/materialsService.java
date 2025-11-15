@@ -11,6 +11,16 @@ import java.util.Map;
 public interface materialsService {
     
     /**
+     * Get all materials with pagination and filtering
+     * @param page Page number (default: 1)
+     * @param pageSize Page size (default: 10)
+     * @param category Filter by category (optional)
+     * @param status Filter by status (optional)
+     * @return Map containing response from Node.js service
+     */
+    Map<String, Object> getAllMaterials(Integer page, Integer pageSize, String category, String status);
+    
+    /**
      * Get available materials
      * @return Map containing response from Node.js service
      */
