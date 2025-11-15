@@ -21,6 +21,19 @@ public class materialsRestController {
     private materialsService materialsService;
 
     /**
+     * Get all materials with pagination and filtering
+     * GET /api/materials
+     */
+    @GetMapping
+    public Map<String, Object> getAllMaterials(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status) {
+        return materialsService.getAllMaterials(page, pageSize, category, status);
+    }
+
+    /**
      * Get available materials
      * GET /api/materials/available
      */

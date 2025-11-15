@@ -77,6 +77,43 @@ public class materialsServiceImpl implements materialsService {
     }
 
     @Override
+    public Map<String, Object> getAllMaterials(Integer page, Integer pageSize, String category, String status) {
+        try {
+            String url = getBaseUrl();
+            logger.info("Calling Node.js service via WebClient: GET {} with params: page={}, pageSize={}, category={}, status={}", 
+                    url, page, pageSize, category, status);
+            
+            // Build URI with query parameters using WebClient's uriBuilder
+            var uriSpec = webClient.get().uri(uriBuilder -> {
+                uriBuilder.path(url);
+                if (page != null && page > 0) {
+                    uriBuilder.queryParam("page", page);
+                }
+                if (pageSize != null && pageSize > 0) {
+                    uriBuilder.queryParam("pageSize", pageSize);
+                }
+                if (category != null && !category.trim().isEmpty()) {
+                    uriBuilder.queryParam("category", category);
+                }
+                if (status != null && !status.trim().isEmpty()) {
+                    uriBuilder.queryParam("status", status);
+                }
+                return uriBuilder.build();
+            });
+            
+            Map<String, Object> response = uriSpec
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .timeout(Duration.ofSeconds(10))
+                    .block();
+            
+            return handleResponse(response);
+        } catch (Exception e) {
+            return handleException(e, "getAllMaterials");
+        }
+    }
+
+    @Override
     public Map<String, Object> getAvailableMaterials() {
         try {
             String url = getBaseUrl() + "/available";
